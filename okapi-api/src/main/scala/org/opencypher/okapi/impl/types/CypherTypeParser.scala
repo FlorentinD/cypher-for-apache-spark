@@ -59,6 +59,7 @@ object CypherTypeParser extends Logging {
   val WILDCARD: P[CTWildcard.type] = IgnoreCase("?").map(_ => CTWildcard)
   val DATE: P[CTDate.type] = IgnoreCase("DATE").map(_ => CTDate)
   val DATETIME: P[CTDateTime.type] = IgnoreCase("DATETIME").map(_ => CTDateTime)
+  val DURATION: P[CTDuration.type] = IgnoreCase("DURATION").map(_ => CTDuration)
 
   // element types
   val NODE: P[CTNode] = P(
@@ -94,7 +95,8 @@ object CypherTypeParser extends Logging {
     LIST |
     MAP |
     DATETIME | // needs to be infront of date due to shortest match semantics
-    DATE
+    DATE |
+    DURATION
   )
 
   val nullableCypherType: P[CypherType] = P(materialCypherType ~ "?").map(ct => ct.nullable)

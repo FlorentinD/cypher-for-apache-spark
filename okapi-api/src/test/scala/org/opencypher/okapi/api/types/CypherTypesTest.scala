@@ -111,7 +111,8 @@ class CypherTypesTest extends ApiBaseTest {
       CTList(CTInteger.nullable) -> ("LIST(INTEGER?)" -> "LIST(INTEGER?)?"),
       CTWildcard -> ("?" -> "??"),
       CTDate -> ("DATE" -> "DATE?"),
-      CTDateTime -> ("DATETIME" -> "DATETIME?")
+      CTDateTime -> ("DATETIME" -> "DATETIME?"),
+      CTDuration -> ("DURATION" -> "DURATION?")
     ).foreach {
       case (t, (materialName, nullableName)) =>
         t.isNullable shouldBe false

@@ -98,7 +98,7 @@ object SparkSQLExprMapper {
           toSparkLiteral(parameters(name).unwrap)
 
         case Property(map, PropertyKey(key)) if map.cypherType.material.isInstanceOf[CTMap] =>
-          val fields =  map.cypherType.material match {
+          val fields = map.cypherType.material match {
             case CTMap(inner) => inner.keySet
             case _ => Set.empty[String]
           }
@@ -143,6 +143,41 @@ object SparkSQLExprMapper {
             case None => functions.current_timestamp()
           }
           functions.lit(mappedArgs).cast(DataTypes.DateType)
+
+        case Duration(expr) =>
+          val intervalString = expr.cypherType.material match {
+            case CTString => {
+              val inputString = parameters.value.head._2.as[String]
+              val durationPattern = "P(.*Y)?(.*M)?(.*W)?(.*D)?T(.*H)?(.*M)?(.*S)?".r
+              inputString match {
+                case Some(durationPattern(years, months, weeks, days, hours, minutes, seconds)) =>
+                  //todo: rewrite string; !also consider negative values and floats
+                  throw NotImplementedException(s"duration based on a string")
+                case _ => throw IllegalArgumentException("Expected string matching P[nY][nM][nW][nD][T[nH][nM][nS]]")
+              }
+            }
+            case CTMap(inner) => {
+              //todo: check if years would also work ; must be year before seconds?
+              val components = List[String]("years", "months", "weeks", "days", "hours",
+                "minutes", "seconds", "milliseconds", "microseconds", "quarters", "nanoseconds")
+              val unsupportedUnits = Map("quarters" -> Tuple2("months", 3), "nanoseconds" -> Tuple2("microseconds", 1000))
+              expr match {
+                case MapExpression(items) =>
+                  items.filterKeys(k => components.contains(k.toLowerCase)).map(item => {
+                    //todo: add support for quarters and nanoseconds ( expr '1 month + 1 month' gets parsed to 2 month by spark)
+                    val parameterKey = item._2.asInstanceOf[Param].name
+                    val parameterValue = parameters.get(parameterKey)
+                    parameterValue match {
+                      case Some(v) => v.unwrap + " " + item._1
+                      case None =>
+                    }
+                  }).reduce(_ + " " + _)
+                case _ => IllegalArgumentException("expected a map")
+              }
+            }
+            case _ => throw IllegalArgumentException("Duration only accepts strings or a map")
+          }
+          functions.expr("INTERVAL " + intervalString)
 
         case l: Lit[_] => functions.lit(l.v)
 
@@ -337,11 +372,11 @@ object SparkSQLExprMapper {
         case Acos(e) => functions.acos(e.asSparkSQLExpr)
         case Asin(e) => functions.asin(e.asSparkSQLExpr)
         case Atan(e) => functions.atan(e.asSparkSQLExpr)
-        case Atan2(e1,e2) => functions.atan2(e1.asSparkSQLExpr, e2.asSparkSQLExpr)
+        case Atan2(e1, e2) => functions.atan2(e1.asSparkSQLExpr, e2.asSparkSQLExpr)
         case Cos(e) => functions.cos(e.asSparkSQLExpr)
         case Cot(e) => Divide(IntegerLit(1)(CTInteger), Tan(e)(CTFloat))(CTFloat).asSparkSQLExpr
         case Degrees(e) => functions.degrees(e.asSparkSQLExpr)
-        case Haversin(e) => Divide(Subtract(IntegerLit(1)(CTInteger),Cos(e)(CTFloat))(CTFloat), IntegerLit(2)(CTInteger))(CTFloat).asSparkSQLExpr
+        case Haversin(e) => Divide(Subtract(IntegerLit(1)(CTInteger), Cos(e)(CTFloat))(CTFloat), IntegerLit(2)(CTInteger))(CTFloat).asSparkSQLExpr
         case Radians(e) => functions.radians(e.asSparkSQLExpr)
         case Sin(e) => functions.sin(e.asSparkSQLExpr)
         case Tan(e) => functions.tan(e.asSparkSQLExpr)

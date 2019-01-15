@@ -59,6 +59,15 @@ class SchemaTyperTest extends BaseTestSuite with Neo4jAstTestSupport with Mockit
     )
   }
 
+  it("should type Duration") {
+    implicit val context: TypeTracker = typeTracker("d" -> CTDuration)
+
+    assertExpr.from("duration()") shouldHaveInferredType CTDuration.nullable //todo: right type ? should be invalid any time
+    assertExpr.from("duration('P14DT16H12M')") shouldHaveInferredType CTDuration.nullable
+    assertExpr.from("duration('P2019-01-06T21:03:21.545')") shouldHaveInferredType CTDuration.nullable
+    assertExpr.from("duration({ days: 14, hours: 16, minutes: 12.5, nanoseconds: -42 })") shouldHaveInferredType CTDuration.nullable
+  }
+
   it("should type Date") {
     implicit val context: TypeTracker = typeTracker("d" -> CTDate)
 

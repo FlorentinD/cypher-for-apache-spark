@@ -28,7 +28,6 @@ package org.opencypher.okapi.api.value
 
 import java.sql.Date
 import java.util.Objects
-
 import org.opencypher.okapi.api.value.CypherValue.CypherEntity._
 import org.opencypher.okapi.api.value.CypherValue.CypherNode._
 import org.opencypher.okapi.api.value.CypherValue.CypherRelationship._
@@ -64,6 +63,7 @@ object CypherValue {
       case jl: java.util.List[_] => seqToCypherList(jl.toArray)
       case dt: java.sql.Date => dt
       case ts: java.sql.Timestamp => ts
+      case dr: java.time.Duration => dr //todo: add java.time.period to duration
       case a: Array[_] => seqToCypherList(a)
       case s: Seq[_] => seqToCypherList(s)
       case m: Map[_, _] => m.map { case (k, cv) => k.toString -> CypherValue(cv) }
@@ -266,6 +266,10 @@ object CypherValue {
   }
 
   implicit class CypherDate(val value: java.sql.Date) extends AnyVal with MaterialCypherValue[java.sql.Date] {
+    override def unwrap: Any = value
+  }
+  //todo: should be something like (java.time.Period, java.time.Duration) --> problem with types inside of a tuple
+  implicit class CypherDuration(val value: java.time.Duration) extends AnyVal with MaterialCypherValue[java.time.Duration] {
     override def unwrap: Any = value
   }
 
@@ -477,4 +481,5 @@ object CypherValue {
 
   object CypherDate extends UnapplyValue[java.sql.Date, CypherDate]
 
+  object CypherDuration extends UnapplyValue[java.time.Duration, CypherDuration]
 }

@@ -102,7 +102,7 @@ object FunctionUtils {
           case f.Timestamp.name => Timestamp()(cypherType)
           case f.DateTime.name => DateTime(expr.headOption)(cypherType)
           case f.Date.name => Date(expr.headOption)(cypherType)
-
+          case f.Duration.name => Duration(expr.head)(cypherType)
           case name => throw NotImplementedException(s"Support for converting ${name} function not yet implemented")
         }
 

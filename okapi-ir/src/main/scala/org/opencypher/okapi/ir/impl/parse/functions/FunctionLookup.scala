@@ -26,6 +26,7 @@
  */
 package org.opencypher.okapi.ir.impl.parse.functions
 
+import org.opencypher.okapi.api.types.CTVoid
 import org.opencypher.v9_0.expressions._
 import org.opencypher.v9_0.expressions.functions.Function
 import org.opencypher.v9_0.util.symbols._
@@ -36,6 +37,7 @@ case object FunctionLookup {
     case Timestamp.name => Timestamp.signatures
     case DateTime.name => DateTime.signatures
     case Date.name => Date.signatures
+    case Duration.name => Duration.signatures
     case _ => Vector.empty
   }
 
@@ -66,6 +68,17 @@ case object Date extends Function with TypeSignatures {
     TypeSignature(argumentTypes = Vector(CTString), outputType = CTDate),
     TypeSignature(argumentTypes = Vector(CTMap), outputType = CTDate),
     TypeSignature(argumentTypes = Vector(), outputType = CTDate)
+
+  )
+}
+
+case object Duration extends Function with TypeSignatures {
+  override val name = "duration"
+
+  override val signatures = Vector(
+    TypeSignature(argumentTypes = Vector(CTString), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTMap), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(), outputType = CTDuration) //todo: something like CTNULL sounds better? (as empty call is illegal)
 
   )
 }

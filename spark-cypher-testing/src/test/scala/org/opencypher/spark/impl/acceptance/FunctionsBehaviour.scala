@@ -28,6 +28,8 @@ package org.opencypher.spark.impl.acceptance
 
 import org.opencypher.okapi.api.value.CypherValue.{CypherMap, CypherNull}
 import org.opencypher.okapi.impl.exception.NotImplementedException
+import org.opencypher.okapi.ir.api.configuration.IrConfiguration.PrintIr
+import org.opencypher.okapi.logical.api.configuration.LogicalConfiguration.PrintLogicalPlan
 import org.opencypher.okapi.testing.Bag
 import org.opencypher.okapi.testing.Bag._
 import org.opencypher.spark.testing.CAPSTestSuite
@@ -35,6 +37,25 @@ import org.scalatest.DoNotDiscover
 
 @DoNotDiscover
 class FunctionsBehaviour extends CAPSTestSuite with DefaultGraphInit {
+
+  describe("duration") {
+    it("returns a valid duration based on a map input") {
+      caps.cypher("RETURN duration({seconds: 1, years: 2}) AS duration").records.toMaps should equal(
+        Bag(
+          CypherMap("duration" -> java.time.Duration.parse("PT1S"))
+        )
+      )
+    }
+    it("returns a valid duration for a duration containing only the time compononent") {
+      caps.cypher("RETURN duration('PT1S') AS duration").records.toMaps should equal(
+        Bag(
+          CypherMap("duration" -> java.time.Duration.parse("PT1S"))
+          )
+      )
+    }
+  }
+
+  //todo: add some more tests (also failing cases)
 
   describe("date") {
     it("returns a valid date") {
@@ -80,7 +101,7 @@ class FunctionsBehaviour extends CAPSTestSuite with DefaultGraphInit {
 
     }
 
-    it("compares two datetimes" ) {
+    it("compares two datetimes") {
       caps.cypher("RETURN datetime(\"2015-10-10T00:00:00\") < datetime(\"2015-10-12T00:00:00\") AS time").records.toMaps should equal(
         Bag(
           CypherMap("time" -> true)
@@ -104,7 +125,7 @@ class FunctionsBehaviour extends CAPSTestSuite with DefaultGraphInit {
     }
   }
 
-  describe("Acos"){
+  describe("Acos") {
     it("on int value") {
       val result = caps.cypher("RETURN acos(1) AS res")
       result.records.toMaps should equal(
@@ -133,7 +154,7 @@ class FunctionsBehaviour extends CAPSTestSuite with DefaultGraphInit {
     }
   }
 
-  describe("Asin"){
+  describe("Asin") {
     it("on int value") {
       val result = caps.cypher("RETURN asin(1) AS res")
       result.records.toMaps should equal(
@@ -162,7 +183,7 @@ class FunctionsBehaviour extends CAPSTestSuite with DefaultGraphInit {
     }
   }
 
-  describe("Atan"){
+  describe("Atan") {
     it("on int value") {
       val result = caps.cypher("RETURN atan(1) AS res")
       result.records.toMaps should equal(
@@ -191,7 +212,7 @@ class FunctionsBehaviour extends CAPSTestSuite with DefaultGraphInit {
     }
   }
 
-  describe("Atan2"){
+  describe("Atan2") {
     it("on int values") {
       val result = caps.cypher("RETURN atan2(1,2) AS res")
       result.records.toMaps should equal(
@@ -238,7 +259,7 @@ class FunctionsBehaviour extends CAPSTestSuite with DefaultGraphInit {
     }
   }
 
-  describe("Cos"){
+  describe("Cos") {
     it("on int value") {
       val result = caps.cypher("RETURN cos(1) AS res")
       result.records.toMaps should equal(
@@ -267,7 +288,7 @@ class FunctionsBehaviour extends CAPSTestSuite with DefaultGraphInit {
     }
   }
 
-  describe("Cot"){
+  describe("Cot") {
     it("on int value") {
       val result = caps.cypher("RETURN cot(1) AS res")
       result.records.toMaps should equal(
@@ -296,7 +317,7 @@ class FunctionsBehaviour extends CAPSTestSuite with DefaultGraphInit {
     }
   }
 
-  describe("Degrees"){
+  describe("Degrees") {
     it("on int value") {
       val result = caps.cypher("RETURN degrees(1) AS res")
       result.records.toMaps should equal(
@@ -325,7 +346,7 @@ class FunctionsBehaviour extends CAPSTestSuite with DefaultGraphInit {
     }
   }
 
-  describe("Haversin"){
+  describe("Haversin") {
     it("on int value") {
       val result = caps.cypher("RETURN haversin(1) AS res")
       result.records.toMaps should equal(
@@ -354,7 +375,7 @@ class FunctionsBehaviour extends CAPSTestSuite with DefaultGraphInit {
     }
   }
 
-  describe("Radians"){
+  describe("Radians") {
     it("on int value") {
       val result = caps.cypher("RETURN radians(180) AS res")
       result.records.toMaps should equal(
@@ -383,7 +404,7 @@ class FunctionsBehaviour extends CAPSTestSuite with DefaultGraphInit {
     }
   }
 
-  describe("Sin"){
+  describe("Sin") {
     it("on int value") {
       val result = caps.cypher("RETURN sin(1) AS res")
       result.records.toMaps should equal(
@@ -412,7 +433,7 @@ class FunctionsBehaviour extends CAPSTestSuite with DefaultGraphInit {
     }
   }
 
-  describe("tan"){
+  describe("tan") {
     it("on int value") {
       val result = caps.cypher("RETURN tan(1) AS res")
       result.records.toMaps should equal(
