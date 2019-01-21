@@ -857,7 +857,7 @@ final case class Atan(expr: Expr)(val cypherType: CypherType = CTWildcard) exten
 final case class Atan2(expr1: Expr, expr2: Expr)(val cypherType: CypherType = CTWildcard) extends FunctionExpr {
   override type This = Atan2
   override def withCypherType(ct: CypherType): Atan2 = copy()(ct)
-  override def exprs: IndexedSeq[Expr] = IndexedSeq(expr1,expr2)
+  override def exprs: IndexedSeq[Expr] = IndexedSeq(expr1, expr2)
 }
 
 final case class Cos(expr: Expr)(val cypherType: CypherType = CTWildcard) extends UnaryFunctionExpr {
@@ -896,12 +896,35 @@ final case class Tan(expr: Expr)(val cypherType: CypherType = CTWildcard) extend
 }
 
 
-
 // Time functions
 
 final case class Timestamp()(val cypherType: CypherType = CTWildcard) extends NullaryFunctionExpr {
   override type This = Timestamp
   override def withCypherType(ct: CypherType): Timestamp = copy()(ct)
+}
+
+final case class DurationBetween(from: Expr, to: Expr)(val cypherType: CypherType = CTWildcard) extends FunctionExpr {
+  override type This = DurationBetween
+  override def withCypherType(ct: CypherType): DurationBetween = copy()(ct)
+  override def exprs: IndexedSeq[Expr] = IndexedSeq(from, to)
+}
+
+final case class DurationInSeconds(from: Expr, to: Expr)(val cypherType: CypherType = CTWildcard) extends FunctionExpr {
+  override type This = DurationInSeconds
+  override def withCypherType(ct: CypherType): DurationInSeconds = copy()(ct)
+  override def exprs: IndexedSeq[Expr] = IndexedSeq(from, to)
+}
+
+final case class DurationInDays(from: Expr, to: Expr)(val cypherType: CypherType = CTWildcard) extends FunctionExpr {
+  override type This = DurationInDays
+  override def withCypherType(ct: CypherType): DurationInDays = copy()(ct)
+  override def exprs: IndexedSeq[Expr] = IndexedSeq(from, to)
+}
+
+final case class DurationInMonth(from: Expr, to: Expr)(val cypherType: CypherType = CTWildcard) extends FunctionExpr {
+  override type This = DurationInMonth
+  override def withCypherType(ct: CypherType): DurationInMonth = copy()(ct)
+  override def exprs: IndexedSeq[Expr] = IndexedSeq(from, to)
 }
 
 // Aggregators

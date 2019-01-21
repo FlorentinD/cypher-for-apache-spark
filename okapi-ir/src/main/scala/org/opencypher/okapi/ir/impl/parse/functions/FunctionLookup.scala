@@ -79,3 +79,14 @@ case object Duration extends Function with TypeSignatures {
     TypeSignature(argumentTypes = Vector(CTMap), outputType = CTDuration)
   )
 }
+case object DurationInSeconds extends Function {
+  override val name = "duration.inSeconds"
+}
+
+case object DurationInDays extends Function {
+  override val name = "duration.inDays"
+}
+
+case object DurationInMonth extends Function {
+  override val name = "duration.inMonths"
+}

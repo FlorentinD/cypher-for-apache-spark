@@ -66,8 +66,8 @@ object FunctionUtils {
         case functions.Trim => Trim(expr.head)(cypherType)
         case functions.LTrim => LTrim(expr.head)(cypherType)
         case functions.RTrim => RTrim(expr.head)(cypherType)
-        case functions.ToUpper => ToUpper(expr.head) (cypherType)
-        case functions.ToLower => ToLower(expr.head) (cypherType)
+        case functions.ToUpper => ToUpper(expr.head)(cypherType)
+        case functions.ToLower => ToLower(expr.head)(cypherType)
         case functions.Properties => Properties(expr.head)(cypherType)
 
         // Logarithmic functions
@@ -90,7 +90,7 @@ object FunctionUtils {
         case functions.Acos => Acos(expr.head)(cypherType)
         case functions.Asin => Asin(expr.head)(cypherType)
         case functions.Atan => Atan(expr.head)(cypherType)
-        case functions.Atan2 => Atan2(expr(0),expr(1))(cypherType)
+        case functions.Atan2 => Atan2(expr(0), expr(1))(cypherType)
         case functions.Cos => Cos(expr.head)(cypherType)
         case functions.Cot => Cot(expr.head)(cypherType)
         case functions.Degrees => Degrees(expr.head)(cypherType)
@@ -106,6 +106,10 @@ object FunctionUtils {
           case f.LocalDateTime.name => LocalDateTime(expr.headOption)(cypherType)
           case f.Date.name => Date(expr.headOption)(cypherType)
           case f.Duration.name => Duration(expr.head)(cypherType)
+          case f.DurationBetween.name => DurationBetween(expr(0), expr(1)) (cypherType)
+          case f.DurationInSeconds.name => DurationInSeconds(expr(0), expr(1))(cypherType)
+          case f.DurationInDays.name => DurationInDays(expr(0), expr(1))(cypherType)
+          case f.DurationInMonth.name => DurationInMonth(expr(0), expr(1))(cypherType)
 
           case name => throw NotImplementedException(s"Support for converting ${name} function not yet implemented")
         }
