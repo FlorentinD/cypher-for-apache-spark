@@ -402,11 +402,14 @@ object SparkSQLExprMapper {
 
 
         // Time functions
-        //todo: change DurationInSeconds as it only regards seconds, minutes and hour components
-        case DurationBetween(from, to) => functions.unix_timestamp(to.asSparkSQLExpr) - functions.unix_timestamp(from.asSparkSQLExpr)
+        //todo: output should be converted to CTDuration
+        case DurationBetween(from, to) => ??? //would be equal to DurationInSeconds for now
+        //todo: ability to handle timezones (if no string-pattern given --> uses default one)
         case DurationInSeconds(from, to) => functions.unix_timestamp(to.asSparkSQLExpr) - functions.unix_timestamp(from.asSparkSQLExpr)
         case DurationInDays(from, to) => functions.datediff(to.asSparkSQLExpr, from.asSparkSQLExpr)
-        case DurationInMonth(from, to) => functions.months_between(from.asSparkSQLExpr, to.asSparkSQLExpr)
+        //use of "floor" as function is too precise
+        case DurationInMonth(from, to) => functions.floor(functions.months_between(to.asSparkSQLExpr, from.asSparkSQLExpr))
+
         case Timestamp() => functions.current_timestamp().cast(LongType)
 
         // Bit operations
