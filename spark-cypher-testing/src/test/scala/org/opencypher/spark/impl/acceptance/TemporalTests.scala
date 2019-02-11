@@ -51,6 +51,30 @@ class TemporalTests extends CAPSTestSuite with ScanGraphInit {
     )
   }
 
+  describe("duration.inDays") {
+    it("duration.inDays") {
+      caps.cypher("RETURN duration.inDays(date('1984-10-11'),date('2015-06-24')) AS durDays").records.toMapsWithCollectedEntities should equal(
+        Bag(CypherMap("durDays" -> Duration(days = 11213)))
+      )
+    }
+  }
+
+  describe("duration.inMonths") {
+    it("duration.inMonths") {
+      caps.cypher("RETURN duration.inMonths(date('1984-10-11'),date('2015-06-24')) AS durMonths").records.toMapsWithCollectedEntities should equal(
+        Bag(CypherMap("durMonths" -> Duration(years = 30, months = 8)))
+      )
+    }
+  }
+
+  describe("duration.inSeconds") {
+    it("duration.inSeconds") {
+      caps.cypher("RETURN duration.inSeconds(localdatetime('2016-07-21T21:45:23'),localdatetime('2016-07-21T21:45:22')) AS durSecs").records.toMapsWithCollectedEntities should equal(
+        Bag(CypherMap("durSecs" -> Duration(seconds = 1)))
+      )
+    }
+  }
+
   describe("duration") {
     it("parses cypher compatible duration strings") {
       caps.cypher("RETURN duration('P1Y2M20D') AS duration").records.toMapsWithCollectedEntities should equal(
