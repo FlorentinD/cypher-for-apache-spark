@@ -95,26 +95,22 @@ case object DurationInMonth extends Function {
   override val name = "duration.inMonths"
 }
 
-//TODO: change outputType to CTDuration asap
+
 case object DurationSubfunctions extends TypeSignatures {
   override val signatures = Vector(
-    TypeSignature(argumentTypes = Vector(CTDate, CTLocalTime), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTDate, CTLocalDateTime), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTDateTime, CTDate), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTDateTime, CTDateTime), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTDateTime, CTLocalTime), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTDateTime, CTLocalDateTime), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTLocalTime, CTDate), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTLocalTime, CTDateTime), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTLocalTime, CTLocalTime), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTLocalTime, CTLocalDateTime), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTLocalDateTime, CTDate), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTLocalDateTime, CTDateTime), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTLocalDateTime, CTLocalTime), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTLocalDateTime, CTLocalDateTime), outputType = CTFloat)
+    TypeSignature(argumentTypes = Vector(CTDate, CTLocalTime), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTDate, CTLocalDateTime), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTDateTime, CTDate), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTDateTime, CTDateTime), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTDateTime, CTLocalTime), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTDateTime, CTLocalDateTime), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTLocalTime, CTDate), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTLocalTime, CTDateTime), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTLocalTime, CTLocalTime), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTLocalTime, CTLocalDateTime), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTLocalDateTime, CTDate), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTLocalDateTime, CTDateTime), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTLocalDateTime, CTLocalTime), outputType = CTDuration),
+    TypeSignature(argumentTypes = Vector(CTLocalDateTime, CTLocalDateTime), outputType = CTDuration)
   )
 }
-
-
-    TypeSignature(argumentTypes = Vector(CTDate, CTDate), outputType = CTFloat),
-    TypeSignature(argumentTypes = Vector(CTDate, CTDateTime), outputType = CTFloat),
