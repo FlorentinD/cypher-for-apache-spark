@@ -98,6 +98,7 @@ case object DurationInMonth extends Function {
 
 case object DurationSubfunctions extends TypeSignatures {
   override val signatures = Vector(
+    TypeSignature(argumentTypes = Vector(CTDate, CTDate), outputType = CTDuration),
     TypeSignature(argumentTypes = Vector(CTDate, CTLocalTime), outputType = CTDuration),
     TypeSignature(argumentTypes = Vector(CTDate, CTLocalDateTime), outputType = CTDuration),
     TypeSignature(argumentTypes = Vector(CTDateTime, CTDate), outputType = CTDuration),
