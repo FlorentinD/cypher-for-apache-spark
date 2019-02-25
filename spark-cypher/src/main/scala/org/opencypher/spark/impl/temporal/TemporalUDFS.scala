@@ -1,34 +1,33 @@
 /**
- * Copyright (c) 2016-2019 "Neo4j Sweden, AB" [https://neo4j.com]
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * Attribution Notice under the terms of the Apache License 2.0
- *
- * This work was created by the collective efforts of the openCypher community.
- * Without limiting the terms of Section 6, any Derivative Work that is not
- * approved by the public consensus process of the openCypher Implementers Group
- * should not be described as “Cypher” (and Cypher® is a registered trademark of
- * Neo4j Inc.) or as "openCypher". Extensions by implementers or prototypes or
- * proposals for change that have been documented or implemented should only be
- * described as "implementation extensions to Cypher" or as "proposed changes to
- * Cypher that are not yet approved by the openCypher community".
- */
+  * Copyright (c) 2016-2019 "Neo4j Sweden, AB" [https://neo4j.com]
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  * Attribution Notice under the terms of the Apache License 2.0
+  *
+  * This work was created by the collective efforts of the openCypher community.
+  * Without limiting the terms of Section 6, any Derivative Work that is not
+  * approved by the public consensus process of the openCypher Implementers Group
+  * should not be described as “Cypher” (and Cypher® is a registered trademark of
+  * Neo4j Inc.) or as "openCypher". Extensions by implementers or prototypes or
+  * proposals for change that have been documented or implemented should only be
+  * described as "implementation extensions to Cypher" or as "proposed changes to
+  * Cypher that are not yet approved by the openCypher community".
+  */
 package org.opencypher.spark.impl.temporal
 
 import java.sql.{Date, Timestamp}
 import java.time.temporal.{ChronoField, IsoFields, TemporalField}
-
 import org.apache.logging.log4j.scala.Logging
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.udf
@@ -119,7 +118,7 @@ object TemporalUDFS extends Logging {
       } else {
         val days = duration.microseconds / CalendarInterval.MICROS_PER_DAY
         // Note: in cypher days (and weeks) make up their own group, thus we have to exclude them for all values < day
-        val daysInMicros =  days * CalendarInterval.MICROS_PER_DAY
+        val daysInMicros = days * CalendarInterval.MICROS_PER_DAY
 
         val l: Long = accessor match {
           case "years" => duration.months / 12
@@ -127,20 +126,20 @@ object TemporalUDFS extends Logging {
           case "months" => duration.months
           case "weeks" => duration.microseconds / CalendarInterval.MICROS_PER_DAY / 7
           case "days" => duration.microseconds / CalendarInterval.MICROS_PER_DAY
-          case "hours" => (duration.microseconds - daysInMicros ) / CalendarInterval.MICROS_PER_HOUR
-          case "minutes" => (duration.microseconds - daysInMicros ) / CalendarInterval.MICROS_PER_MINUTE
-          case "seconds" => (duration.microseconds - daysInMicros ) / CalendarInterval.MICROS_PER_SECOND
-          case "milliseconds" => (duration.microseconds - daysInMicros ) / CalendarInterval.MICROS_PER_MILLI
+          case "hours" => (duration.microseconds - daysInMicros) / CalendarInterval.MICROS_PER_HOUR
+          case "minutes" => (duration.microseconds - daysInMicros) / CalendarInterval.MICROS_PER_MINUTE
+          case "seconds" => (duration.microseconds - daysInMicros) / CalendarInterval.MICROS_PER_SECOND
+          case "milliseconds" => (duration.microseconds - daysInMicros) / CalendarInterval.MICROS_PER_MILLI
           case "microseconds" => duration.microseconds - daysInMicros
 
           case "quartersofyear" => (duration.months / 3) % 4
           case "monthsofquarter" => duration.months % 3
           case "monthsofyear" => duration.months % 12
           case "daysofweek" => (duration.microseconds / CalendarInterval.MICROS_PER_DAY) % 7
-          case "minutesofhour" => ((duration.microseconds  - daysInMicros )/ CalendarInterval.MICROS_PER_MINUTE) % 60
-          case "secondsofminute" => ((duration.microseconds - daysInMicros ) / CalendarInterval.MICROS_PER_SECOND) % 60
-          case "millisecondsofsecond" => ((duration.microseconds - daysInMicros ) / CalendarInterval.MICROS_PER_MILLI) % 1000
-          case "microsecondsofsecond" => (duration.microseconds - daysInMicros ) % 1000000
+          case "minutesofhour" => ((duration.microseconds - daysInMicros) / CalendarInterval.MICROS_PER_MINUTE) % 60
+          case "secondsofminute" => ((duration.microseconds - daysInMicros) / CalendarInterval.MICROS_PER_SECOND) % 60
+          case "millisecondsofsecond" => ((duration.microseconds - daysInMicros) / CalendarInterval.MICROS_PER_MILLI) % 1000
+          case "microsecondsofsecond" => (duration.microseconds - daysInMicros) % 1000000
 
           case other => throw UnsupportedOperationException(s"Unknown Duration accessor: $other")
         }
@@ -148,6 +147,16 @@ object TemporalUDFS extends Logging {
       }
     }
   )
+  //todo: fix unsupported schema for CalendarInterval ! (maybe dont convert inside udf?)
+  //todo: test if always problem with returntype calendarinterval
+  def intToCalendarInterval(timeUnit: String): UserDefinedFunction = udf((s: Long) =>
+    timeUnit match {
+      case "seconds" => new CalendarInterval(0, s * 1000)
+      case "days" => new CalendarInterval(0, s * CalendarInterval.MICROS_PER_DAY)
+      case "months" => new CalendarInterval(s.toInt,0)
+    }
+  )
+
 
   private def dateAccessor[I: TypeTag](accessor: TemporalField): UserDefinedFunction = udf[Long, I] {
     case d: Date => d.toLocalDate.get(accessor)
