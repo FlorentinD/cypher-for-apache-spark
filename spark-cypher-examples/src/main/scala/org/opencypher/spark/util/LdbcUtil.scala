@@ -166,8 +166,7 @@ object LdbcUtil {
       case "BOOLEAN" => "BOOLEAN"
       case "FLOAT" => "FLOAT"
       case "DOUBLE" => "FLOAT"
-      // TODO: map correctly as soon as we support timestamp
-      case "TIMESTAMP" => "STRING"
+      case "TIMESTAMP" => "TIMESTAMP" //todo: really needed here?
     }
   }
 
