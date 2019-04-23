@@ -30,6 +30,8 @@ import org.junit.runner.RunWith
 import org.opencypher.okapi.api.schema.{PropertyKeys, Schema}
 import org.opencypher.okapi.api.types.{CTInteger, CTString}
 import org.opencypher.okapi.api.value.CypherValue.CypherMap
+import org.opencypher.okapi.ir.api.configuration.IrConfiguration.PrintIr
+import org.opencypher.okapi.relational.api.configuration.CoraConfiguration.PrintRelationalPlan
 import org.opencypher.okapi.relational.api.graph.RelationalCypherGraph
 import org.opencypher.okapi.relational.impl.graph.UnionGraph
 import org.opencypher.okapi.relational.impl.operators.SwitchContext
@@ -974,5 +976,20 @@ class MultipleGraphTests extends CAPSTestSuite with ScanGraphInit {
     result.records.toMaps shouldBe Bag(
       CypherMap("n" -> CAPSNode(0, Set("FOO")))
     )
+  }
+
+  it("clear scope after construct") {
+    PrintIr.set()
+    PrintRelationalPlan.set()
+    val query =
+      """
+        |MATCH (a)
+        |CONSTRUCT
+        |   CREATE (b)
+        |RETURN b
+      """.stripMargin
+
+    val result = testGraph1.cypher(query)
+    result.records.toMaps shouldBe Bag()
   }
 }
